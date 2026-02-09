@@ -1,78 +1,205 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QEXERON BTC Chart</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QEXERON Charts</title>
 
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      background: #131722;
-      overflow: hidden;
-      font-family: Arial, sans-serif;
-    }
+<style>
+:root{
+  --bg:#131722;
+  --gold:rgba(255,200,120,.06);
+  --text:#d1d4dc;
+}
 
-    #tv-container {
-      width: 100%;
-      height: 100vh;
-    }
+/* ===== BASE ===== */
+html,body{
+  margin:0;
+  padding:0;
+  height:100%;
+  background:var(--bg);
+  overflow:hidden;
+  font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial;
+}
 
-    footer {
-      position: fixed;
-      bottom: 8px;
-      left: 12px;
-      color: #aaa;
-      font-size: 12px;
-      z-index: 10;
-    }
-  </style>
+/* ===== WATERMARK (ORQADA) ===== */
+#watermark{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+  user-select:none;
+  z-index:0;
+}
+#watermark img{
+  width:min(520px,90vw);
+  opacity:.06;
+  filter: blur(.2px) drop-shadow(0 0 40px rgba(255,200,120,.25));
+  animation: breathe 7s ease-in-out infinite;
+}
+@keyframes breathe{
+  0%,100%{transform:scale(1);opacity:.055}
+  50%{transform:scale(1.02);opacity:.075}
+}
+
+/* ===== SPLASH ===== */
+#splash{
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(900px 500px at 50% 40%, rgba(255,255,255,.06), transparent 60%),
+    var(--bg);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  transition:.7s ease;
+}
+#splash.hide{
+  opacity:0;
+  transform:scale(1.03);
+  pointer-events:none;
+}
+.splash-wrap{text-align:center}
+.splash-logo{
+  width:min(320px,70vw);
+  opacity:0;
+  transform:translateY(10px);
+  filter: drop-shadow(0 0 35px rgba(255,200,120,.35));
+  animation: pop .9s ease forwards;
+}
+@keyframes pop{
+  to{opacity:1;transform:translateY(0)}
+}
+.loader{
+  margin:20px auto 8px;
+  width:min(320px,80vw);
+  height:6px;
+  border-radius:99px;
+  background:rgba(255,255,255,.08);
+  overflow:hidden;
+}
+.loader::after{
+  content:"";
+  display:block;
+  height:100%;
+  width:40%;
+  background:linear-gradient(90deg,transparent,rgba(255,220,160,.7),transparent);
+  animation: load 1.3s infinite;
+}
+@keyframes load{
+  0%{transform:translateX(-70%)}
+  50%{transform:translateX(70%)}
+  100%{transform:translateX(170%)}
+}
+.sub{
+  color:rgba(209,212,220,.75);
+  font-size:13px;
+  letter-spacing:2px;
+}
+
+/* ===== CHART ===== */
+#tv-container{
+  position:relative;
+  z-index:1;
+  width:100%;
+  height:100vh;
+  opacity:0;
+  transition:opacity .6s ease;
+}
+#tv-container.ready{opacity:1}
+
+/* ===== FOOTER ===== */
+footer{
+  position:fixed;
+  bottom:10px;
+  left:12px;
+  font-size:12px;
+  color:rgba(255,255,255,.5);
+  z-index:2;
+}
+</style>
 </head>
+
 <body>
 
-  <div id="tv-container"></div>
+<!-- WATERMARK -->
+<div id="watermark">
+  <img src="D67C691B-DBC8-4C9C-8EDA-EEB1918D39E0.png" alt="QEXERON">
+</div>
 
-  <footer>QEXERON FOREX CHARTS VIEW</footer>
+<!-- SPLASH -->
+<div id="splash">
+  <div class="splash-wrap">
+    <img class="splash-logo" src="D67C691B-DBC8-4C9C-8EDA-EEB1918D39E0.png" alt="QEXERON">
+    <div class="loader"></div>
+    <div class="sub">LOADING CHARTS…</div>
+  </div>
+</div>
 
-  <!-- TradingView script -->
-  <script src="https://s3.tradingview.com/tv.js"></script>
+<!-- CHART -->
+<div id="tv-container"></div>
 
-  <script>
-    window.addEventListener("load", function () {
-      if (typeof TradingView === "undefined") {
-        document.body.innerHTML = "<p style='color:white;padding:20px'>TradingView yuklanmadi</p>";
-        return;
-      }
+<footer>QEXERON FOREX CHARTS VIEW</footer>
 
-      new TradingView.widget({
-        container_id: "tv-container",
-        width: "100%",
-        height: "100%",
-        symbol: "BINANCE:BTCUSDT",
-        interval: "15",
-        timezone: "Asia/Tashkent",
-        theme: "dark",
-        style: "1",
-        locale: "en",
-        toolbar_bg: "#131722",
-        enable_publishing: false,
-        allow_symbol_change: true,
-        hide_side_toolbar: false,
-        withdateranges: true,
-        details: true,
-        hotlist: true,
-        calendar: true,
-        watchlist: [
-          "BINANCE:BTCUSDT",
-          "BINANCE:ETHUSDT",
-          "BINANCE:BNBUSDT",
-          "BINANCE:SOLUSDT"
-        ]
-      });
-    });
-  </script>
+<script src="https://s3.tradingview.com/tv.js"></script>
+<script>
+const splash=document.getElementById("splash");
+const tv=document.getElementById("tv-container");
+
+function hideSplash(){
+  tv.classList.add("ready");
+  splash.classList.add("hide");
+  setTimeout(()=>splash.remove(),900);
+}
+
+function waitForChart(){
+  const start=Date.now();
+  (function check(){
+    if(tv.querySelector("iframe")){
+      hideSplash();
+      return;
+    }
+    if(Date.now()-start<12000){
+      requestAnimationFrame(check);
+    }
+  })();
+}
+
+window.addEventListener("load",()=>{
+  if(typeof TradingView==="undefined")return;
+
+  new TradingView.widget({
+    container_id:"tv-container",
+    width:"100%",
+    height:"100%",
+    symbol:"BINANCE:BTCUSDT",
+    interval:"15",
+    timezone:"Asia/Tashkent",
+    theme:"dark",
+    style:"1",
+    locale:"en",
+    toolbar_bg:"#131722",
+    enable_publishing:false,
+    allow_symbol_change:true,
+    hide_side_toolbar:false,
+    withdateranges:true,
+    details:true,
+    hotlist:true,
+    calendar:true,
+    watchlist:[
+      "BINANCE:BTCUSDT",
+      "BINANCE:ETHUSDT",
+      "BINANCE:BNBUSDT",
+      "BINANCE:SOLUSDT"
+    ]
+  });
+
+  waitForChart();
+});
+</script>
 
 </body>
 </html>
