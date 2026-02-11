@@ -2,176 +2,133 @@
 <html lang="uz">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  
+  <title>Qexeron | Live Trading Charts - Crypto, Forex & Gold Terminal</title>
+  
+  <meta name="description" content="Qexeron – Professional bepul trading terminali. Ro'yxatdan o'tishsiz Bitcoin (BTC), Oltin (XAUUSD) va Forex grafiklari. Eng yaxshi TradingView muqobili." />
+  <meta name="keywords" content="tradingview uzbekistan, bitkoin kursi, forex tahlil, qexeron terminal, xauusd chart live, kriptovalyuta tahlili" />
+  <link rel="canonical" href="https://qexeron.uz/" />
 
-  <title>Qexeron Terminal | Live Crypto & Forex Charts (No Login)</title>
-  <meta name="description" content="Access professional trading charts for BTC, ETH, and Forex without registration. Real-time data, high-speed execution, and free technical analysis tools on Qexeron." />
-  <meta name="keywords" content="tradingview alternative, free crypto charts, no login trading, live forex data, bitcoin chart uzbekistan, qexeron terminal" />
-  <meta name="author" content="Qexeron Dev" />
-
-  <link rel="preconnect" href="https://s3.tradingview.com" />
-  <link rel="dns-prefetch" href="https://s3.tradingview.com" />
-
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <link rel="manifest" href="/manifest.json" /> <meta property="og:site_name" content="Qexeron Terminal" />
-  <meta property="og:title" content="Stop Paying for Charts! Use Qexeron 😈" />
-  <meta property="og:description" content="Professional-grade trading terminal. 100% Free. No Registration." />
-  <meta property="og:image" content="https://qexeron.uz/6417DFC5-D79B-49EE-BC6C-A89E6BCAD2CE.png" />
-  <meta property="og:url" content="https://qexeron.uz/" />
-  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preload" href="https://s3.tradingview.com/tv.js" as="script" />
+  <meta name="theme-color" content="#080a0f" />
 
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "Qexeron Terminal",
+    "@type": "WebApplication",
+    "name": "Qexeron Trading Terminal",
     "applicationCategory": "FinanceApplication",
-    "operatingSystem": "Web, iOS, Android",
+    "operatingSystem": "All",
+    "description": "Professional financial charts for technical analysis without login.",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-    "featureList": "Real-time charts, No Registration, Technical Indicators, Multi-asset support",
-    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "2840" }
+    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "5", "reviewCount": "1500" }
   }
   </script>
 
   <style>
-    /* 💎 DESIGN SYSTEM */
-    :root {
-      --bg: #0d1017; /* Yanada quyuqroq, premium rang */
-      --accent: #ffb400;
-      --text: #d1d4dc;
+    :root{ --bg:#080a0f; --accent:#ffb400; --text:#e2e4ea; }
+    *{ margin:0; padding:0; box-sizing:border-box; }
+    body { 
+      background: var(--bg); color: var(--text); 
+      font-family: -apple-system, system-ui, sans-serif;
+      height: 100dvh; overflow: hidden; display: flex; flex-direction: column;
     }
 
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    /* 🌊 SPLASH */
+    #loading-gate {
+      position: fixed; inset: 0; z-index: 1000;
+      background: #080a0f; display: flex; flex-direction: column; 
+      align-items: center; justify-content: center;
+      transition: opacity 0.8s ease;
+    }
+    #loading-gate.hide { opacity: 0; pointer-events: none; }
 
-    body, html {
-      margin: 0; padding: 0; width: 100%; height: 100%;
-      background: var(--bg); color: var(--text);
-      font-family: 'Inter', -apple-system, sans-serif;
-      overflow: hidden;
-    }
+    .logo-main { width: 140px; filter: drop-shadow(0 0 25px rgba(255,180,0,0.3)); }
 
-    /* 🌊 SEO HIDDEN BUT READABLE */
-    .seo-ghost {
-      position: absolute; width: 1px; height: 1px; padding: 0;
-      margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;
-    }
+    /* 📊 TERMINAL CORE */
+    #q-terminal { flex: 1; width: 100%; height: 100%; display: block !important; }
 
-    /* 🌪 SPLASH ANIMATION */
-    #splash {
-      position: fixed; inset: 0; z-index: 9999;
-      background: var(--bg);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      transition: all 0.8s cubic-bezier(0.65, 0, 0.35, 1);
-    }
-    #splash.fade-out { opacity: 0; visibility: hidden; transform: scale(1.1); }
-
-    .logo-container {
-      position: relative; margin-bottom: 20px;
-    }
-    .logo-main {
-      width: 180px; filter: drop-shadow(0 0 20px rgba(255,180,0,0.2));
-      animation: pulse 2s infinite alternate;
-    }
-
-    @keyframes pulse {
-      from { transform: scale(1); opacity: 0.8; }
-      to { transform: scale(1.05); opacity: 1; }
-    }
-
-    .progress-bar {
-      width: 240px; height: 2px; background: rgba(255,255,255,0.05);
-      border-radius: 4px; overflow: hidden;
-    }
-    .progress-line {
-      width: 100%; height: 100%; background: var(--accent);
-      transform: translateX(-100%);
-      animation: slide 1.5s infinite;
-    }
-    @keyframes slide { to { transform: translateX(100%); } }
-
-    /* 📊 CHART CONTAINER */
-    #tv-widget {
-      width: 100%; height: 100vh; height: 100svh;
-      opacity: 0; transition: opacity 1s ease;
-    }
-    #tv-widget.active { opacity: 1; }
-
-    /* 🛠 FLOATING TOOLS (Optional SEO bonus) */
-    .status-bar {
-      position: fixed; bottom: 10px; right: 10px;
-      font-size: 10px; color: rgba(255,255,255,0.3);
-      z-index: 100; pointer-events: none;
-    }
+    /* 🤫 THE SEO GHOST (Google & Yandex love this) */
+    .seo-ghost { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
   </style>
 </head>
 <body>
 
-  <header class="seo-ghost">
-    <h1>Qexeron - Professional Trading Charts Online</h1>
-    <h2>Real-time Bitcoin, Ethereum, and Gold prices</h2>
-    <p>Analyze markets with free technical indicators. The fastest alternative to TradingView with no login required.</p>
-  </header>
-
-  <div id="splash">
-    <div class="logo-container">
-      <img src="D67C691B-DBC8-4C9C-8EDA-EEB1918D39E0.png" class="logo-main" alt="Qexeron Logo">
-    </div>
-    <div class="progress-bar">
-      <div class="progress-line"></div>
-    </div>
-    <p style="font-size: 11px; margin-top: 15px; letter-spacing: 3px; color: #5d606b;">INITIALIZING DATA...</p>
+  <div class="seo-ghost">
+    <h1>Qexeron Terminal – Professional Bepul Savdo Grafiklari</h1>
+    <p>Bitcoin (BTC), Ethereum (ETH) va oltin (XAUUSD) narxlarini onlayn tahlil qiling. 
+    Bizning terminalimiz TradingView bazasida ishlaydi va barcha indikatorlar bepul. 
+    Лучшие графики криптовалют и форекс в Узбекистане без регистрации.</p>
+    <h2>Nega Qexeron?</h2>
+    <ul>
+      <li>Tezkor Binance va Bybit ma'lumotlari.</li>
+      <li>Barcha chizish asboblari va indikatorlar (RSI, MACD) ochiq.</li>
+      <li>Hech qanday reklamasiz va ro'yxatdan o'tishsiz.</li>
+    </ul>
   </div>
 
-  <main id="tv-widget" aria-label="Financial Charts"></main>
+  <div id="loading-gate">
+    <img src="6417DFC5-D79B-49EE-BC6C-A89E6BCAD2CE.png" class="logo-main" alt="Qexeron">
+    <p style="font-size:10px; color:#5d606b; margin-top:20px; letter-spacing:4px">BOOTING TERMINAL...</p>
+  </div>
 
-  <div class="status-bar">QEXERON v2.0 | SECURE CONNECTION</div>
+  <main id="q-terminal"></main>
 
   <script src="https://s3.tradingview.com/tv.js"></script>
   <script>
-    const initChart = () => {
+    function initTerminal() {
+      // TradingView kutubxonasi yuklanganini tekshirish
+      if (typeof TradingView === 'undefined') {
+        console.error("TradingView yuklanmadi, qayta urinish...");
+        setTimeout(initTerminal, 1000);
+        return;
+      }
+
+      const isMobile = window.innerWidth < 768;
+
       new TradingView.widget({
         "autosize": true,
         "symbol": "BINANCE:BTCUSDT",
-        "interval": "60",
+        "interval": "15",
         "timezone": "Asia/Tashkent",
         "theme": "dark",
         "style": "1",
         "locale": "en",
-        "toolbar_bg": "#0d1017",
+        "toolbar_bg": "#080a0f",
         "enable_publishing": false,
+        "hide_side_toolbar": false, // Instrumentlar yoqildi 😈
         "allow_symbol_change": true,
-        "container_id": "tv-widget",
-        "hide_side_toolbar": window.innerWidth < 768,
+        "save_image": true,
         "withdateranges": true,
-        "studies": ["MASimple@tv-basicstudies"],
+        "details": !isMobile,
+        "hotlist": !isMobile,
+        "calendar": !isMobile,
+        "container_id": "q-terminal",
         "watchlist": [
           "BINANCE:BTCUSDT",
           "BINANCE:ETHUSDT",
-          "BINANCE:SOLUSDT",
-          "FOREXCOM:XAUUSD"
-        ]
+          "FOREXCOM:XAUUSD",
+          "FX:EURUSD"
+        ],
+        "studies": ["RSI@tv-basicstudies", "MASimple@tv-basicstudies"]
       });
 
-      // 🔥 Smart Loading Logic
+      // Chart yuklanganini tekshirish va splashni yopish
       const checkIframe = setInterval(() => {
-        const iframe = document.querySelector('#tv-widget iframe');
-        if (iframe) {
-          setTimeout(() => {
-            document.getElementById('splash').classList.add('fade-out');
-            document.getElementById('tv-widget').classList.add('active');
-          }, 1000);
+        const frame = document.querySelector('#q-terminal iframe');
+        if (frame) {
+          document.getElementById('loading-gate').classList.add('hide');
           clearInterval(checkIframe);
         }
-      }, 100);
-    };
+      }, 500);
+    }
 
-    window.addEventListener('DOMContentLoaded', initChart);
+    // Tab retention (SEO uchun juda muhim)
+    window.onblur = () => { document.title = "📉 Narxlar o'zgaryapti! Qayt..."; };
+    window.onfocus = () => { document.title = "Qexeron | Live Terminal"; };
 
-    // Safari-da balandlikni to'g'irlash
-    window.addEventListener('resize', () => {
-      document.body.style.height = window.innerHeight + 'px';
-    });
+    window.onload = initTerminal;
   </script>
 </body>
 </html>
