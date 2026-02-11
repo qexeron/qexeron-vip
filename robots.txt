@@ -1,8 +1,3 @@
 User-agent: *
 Allow: /
-
-# Crawl delay (ba'zi botlar uchun)
-Crawl-delay: 5
-
-# Sitemap location
 Sitemap: https://qexeron.uz/sitemap.xml
