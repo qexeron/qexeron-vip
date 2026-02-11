@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
+  
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   
@@ -12,6 +13,9 @@
   <link rel="canonical" href="https://qexeron.uz/" />
 <link rel="shortcut icon" href="6417DFC5-D79B-49EE-BC6C-A89E6BCAD2CE.png" type="image/png">
 <link rel="icon" href="6417DFC5-D79B-49EE-BC6C-A89E6BCAD2CE.png" type="image/png">
+<link rel="shortcut icon" href="6417DFC5-D79B-49EE-BC6C-A89E6BCAD2CE.png" type="image/png">
+<link rel="icon" href="6417DFC5-D79B-49EE-BC6C-A89E6BCAD2CE.png" type="image/png">
+<link rel="apple-touch-icon" href="6417DFC5-D79B-49EE-BC6C-A89E6BCAD2CE.png">
 
   <link rel="preload" href="https://s3.tradingview.com/tv.js" as="script" />
   <meta name="theme-color" content="#080a0f" />
@@ -57,6 +61,11 @@
   </style>
 </head>
 <body>
+  <div style="display:none !important;">
+  <h2>Qexeron – O'zbekistondagi eng tezkor trading terminali</h2>
+  <p>Bitcoin, Ethereum, oltin va Forex bozorlari uchun jonli grafiklar. Bizda tahlil qilish bepul.</p>
+</div>
+
 
   <div class="seo-ghost">
     <h1>Qexeron Terminal – Professional Bepul Savdo Grafiklari</h1>
@@ -72,13 +81,15 @@
   </div>
 
   <div id="loading-gate">
-    <img src="6417DFC5-D79B-49EE-BC6C-A89E6BCAD2CE.png" class="logo-main" alt="Qexeron">
+    <img src="6417DFC5-D79B-49EE-BC6C-A89E6BCAD2CE.png" class="master-logo" alt="Qexeron Terminal" fetchpriority="high">
+
     <p style="font-size:10px; color:#5d606b; margin-top:20px; letter-spacing:4px">BOOTING TERMINAL...</p>
   </div>
 
   <main id="q-terminal"></main>
 
-  <script src="https://s3.tradingview.com/tv.js"></script>
+  <script src="https://s3.tradingview.com/tv.js" defer></script>
+
   <script>
     function initTerminal() {
       // TradingView kutubxonasi yuklanganini tekshirish
