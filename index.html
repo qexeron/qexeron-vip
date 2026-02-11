@@ -1,148 +1,104 @@
-
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="uz-UZ">
 <head>
-  
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  
-  <title>Qexeron | Live Trading Charts - Crypto, Forex & Gold Terminal</title>
-  
-  <meta name="description" content="Qexeron – Professional bepul trading terminali. Ro'yxatdan o'tishsiz Bitcoin (BTC), Oltin (XAUUSD) va Forex grafiklari. Eng yaxshi TradingView muqobili." />
-  <meta name="keywords" content="tradingview uzbekistan, bitkoin kursi, forex tahlil, qexeron terminal, xauusd chart live, kriptovalyuta tahlili" />
-  <link rel="canonical" href="https://qexeron.uz/" />
-<link rel="shortcut icon" href="6417DFC5-D79B-49EE-BC6C-A89E6BCAD2CE.png" type="image/png">
-<link rel="icon" href="6417DFC5-D79B-49EE-BC6C-A89E6BCAD2CE.png" type="image/png">
-<link rel="shortcut icon" href="6417DFC5-D79B-49EE-BC6C-A89E6BCAD2CE.png" type="image/png">
-<link rel="icon" href="6417DFC5-D79B-49EE-BC6C-A89E6BCAD2CE.png" type="image/png">
-<link rel="apple-touch-icon" href="6417DFC5-D79B-49EE-BC6C-A89E6BCAD2CE.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <title>Qexeron | Free Chart View</title>
+    
+    <meta property="og:title" content="Qexeron Terminal">
+    <meta property="og:description" content="No Login. All Tools Unlocked.">
+    <meta property="og:image" content="6417DFC5-D79B-49EE-BC6C-A89E6BCAD2CE.png">
 
-  <link rel="preload" href="https://s3.tradingview.com/tv.js" as="script" />
-  <meta name="theme-color" content="#080a0f" />
+    <style>
+        :root { --bg: #080a0f; --accent: #ffb400; }
+        body { background: var(--bg); height: 100dvh; overflow: hidden; margin: 0; display: flex; flex-direction: column; font-family: sans-serif; }
+        
+        #loading-gate { position: fixed; inset: 0; z-index: 9999; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.5s; }
+        #loading-gate.hide { opacity: 0; pointer-events: none; }
+        .master-logo { width: 110px; margin-bottom: 20px; }
+        .loader-bar { width: 140px; height: 3px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; }
+        .loader-fill { width: 40%; height: 100%; background: var(--accent); animation: slide 1.5s infinite; position: relative; }
+        @keyframes slide { 0% { left: -40%; } 100% { left: 100%; } }
 
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "Qexeron Trading Terminal",
-    "applicationCategory": "FinanceApplication",
-    "operatingSystem": "All",
-    "description": "Professional financial charts for technical analysis without login.",
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "5", "reviewCount": "1500" }
-  }
-  </script>
-
-  <style>
-    :root{ --bg:#080a0f; --accent:#ffb400; --text:#e2e4ea; }
-    *{ margin:0; padding:0; box-sizing:border-box; }
-    body { 
-      background: var(--bg); color: var(--text); 
-      font-family: -apple-system, system-ui, sans-serif;
-      height: 100dvh; overflow: hidden; display: flex; flex-direction: column;
-    }
-
-    /* 🌊 SPLASH */
-    #loading-gate {
-      position: fixed; inset: 0; z-index: 1000;
-      background: #080a0f; display: flex; flex-direction: column; 
-      align-items: center; justify-content: center;
-      transition: opacity 0.8s ease;
-    }
-    #loading-gate.hide { opacity: 0; pointer-events: none; }
-
-    .logo-main { width: 140px; filter: drop-shadow(0 0 25px rgba(255,180,0,0.3)); }
-
-    /* 📊 TERMINAL CORE */
-    #q-terminal { flex: 1; width: 100%; height: 100%; display: block !important; }
-
-    /* 🤫 THE SEO GHOST (Google & Yandex love this) */
-    .seo-ghost { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
-  </style>
+        #share-btn {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            z-index: 1000; background: #0088cc; color: #fff; border: none;
+            padding: 14px 28px; border-radius: 50px; font-weight: bold;
+            cursor: pointer; display: none; align-items: center; gap: 10px;
+            box-shadow: 0 8px 25px rgba(0, 136, 204, 0.4);
+        }
+        #q-terminal { flex: 1; width: 100%; height: 100%; }
+    </style>
 </head>
 <body>
-  <div style="display:none !important;">
-  <h2>Qexeron – O'zbekistondagi eng tezkor trading terminali</h2>
-  <p>Bitcoin, Ethereum, oltin va Forex bozorlari uchun jonli grafiklar. Bizda tahlil qilish bepul.</p>
-</div>
 
+    <div id="loading-gate">
+        <img src="6417DFC5-D79B-49EE-BC6C-A89E6BCAD2CE.png" class="master-logo">
+        <div class="loader-bar"><div class="loader-fill"></div></div>
+    </div>
 
-  <div class="seo-ghost">
-    <h1>Qexeron Terminal – Professional Bepul Savdo Grafiklari</h1>
-    <p>Bitcoin (BTC), Ethereum (ETH) va oltin (XAUUSD) narxlarini onlayn tahlil qiling. 
-    Bizning terminalimiz TradingView bazasida ishlaydi va barcha indikatorlar bepul. 
-    Лучшие графики криптовалют и форекс в Узбекистане без регистрации.</p>
-    <h2>Nega Qexeron?</h2>
-    <ul>
-      <li>Tezkor Binance va Bybit ma'lumotlari.</li>
-      <li>Barcha chizish asboblari va indikatorlar (RSI, MACD) ochiq.</li>
-      <li>Hech qanday reklamasiz va ro'yxatdan o'tishsiz.</li>
-    </ul>
-  </div>
+    <button id="share-btn" onclick="shareDynamicChart()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.11.02-1.93 1.23-5.46 3.62-.51.35-.98.52-1.4.51-.46-.01-1.35-.26-2.01-.48-.81-.27-1.45-.42-1.39-.89.03-.25.38-.51 1.07-.78 4.2-1.82 7-3.03 8.4-3.61 4-.1.1.1.1.1z"/></svg>
+        Share Analysis
+    </button>
+    
+    <main id="q-terminal"></main>
 
-  <div id="loading-gate">
-    <img src="6417DFC5-D79B-49EE-BC6C-A89E6BCAD2CE.png" class="master-logo" alt="Qexeron Terminal" fetchpriority="high">
+    <script src="https://s3.tradingview.com/tv.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        let activeSymbol = urlParams.get('symbol') || "BINANCE:BTCUSDT";
 
-    <p style="font-size:10px; color:#5d606b; margin-top:20px; letter-spacing:4px">BOOTING TERMINAL...</p>
-  </div>
+        const widget = new TradingView.widget({
+            "autosize": true,
+            "symbol": activeSymbol,
+            "interval": "15",
+            "timezone": "Asia/Tashkent",
+            "theme": "dark",
+            "style": "1",
+            "locale": "en",
+            "toolbar_bg": "#080a0f",
+            "enable_publishing": false,
+            "allow_symbol_change": true,
+            "container_id": "q-terminal",
+            "hide_side_toolbar": false, // CHAP PANELNI QAYTARDIK
+            "withdateranges": true,
+            "details": true, // O'NG TOMONDAGI MA'LUMOTLAR
+            "hotlist": true,
+            "calendar": true,
+            "show_popup_button": true,
+            "popup_width": "1000",
+            "popup_height": "650"
+        });
 
-  <main id="q-terminal"></main>
+        const check = setInterval(() => {
+            if(document.querySelector('iframe')) {
+                document.getElementById('loading-gate').classList.add('hide');
+                document.getElementById('share-btn').style.display = 'flex';
+                clearInterval(check);
+            }
+        }, 1000);
 
-  <script src="https://s3.tradingview.com/tv.js" defer></script>
+        function shareDynamicChart() {
+            let symbolToShare = activeSymbol.split(':').pop(); // Default yoki oxirgi aniqlangani
+            
+            try {
+                const iframe = document.querySelector('iframe');
+                // TradingView iframe title odatda "BTCUSDT 15 Chart" bo'ladi
+                const title = iframe.title; 
+                
+                if(title && title !== "TradingView Player" && title !== "") {
+                    // Title'dan faqat parani ajratib olamiz
+                    symbolToShare = title.split(' ')[0];
+                }
+            } catch(e) { console.log(e); }
 
-  <script>
-    function initTerminal() {
-      // TradingView kutubxonasi yuklanganini tekshirish
-      if (typeof TradingView === 'undefined') {
-        console.error("TradingView yuklanmadi, qayta urinish...");
-        setTimeout(initTerminal, 1000);
-        return;
-      }
-
-      const isMobile = window.innerWidth < 768;
-
-      new TradingView.widget({
-        "autosize": true,
-        "symbol": "BINANCE:BTCUSDT",
-        "interval": "15",
-        "timezone": "Asia/Tashkent",
-        "theme": "dark",
-        "style": "1",
-        "locale": "en",
-        "toolbar_bg": "#080a0f",
-        "enable_publishing": false,
-        "hide_side_toolbar": false, // Instrumentlar yoqildi 😈
-        "allow_symbol_change": true,
-        "save_image": true,
-        "withdateranges": true,
-        "details": !isMobile,
-        "hotlist": !isMobile,
-        "calendar": !isMobile,
-        "container_id": "q-terminal",
-        "watchlist": [
-          "BINANCE:BTCUSDT",
-          "BINANCE:ETHUSDT",
-          "FOREXCOM:XAUUSD",
-          "FX:EURUSD"
-        ],
-        "studies": ["RSI@tv-basicstudies", "MASimple@tv-basicstudies"]
-      });
-
-      // Chart yuklanganini tekshirish va splashni yopish
-      const checkIframe = setInterval(() => {
-        const frame = document.querySelector('#q-terminal iframe');
-        if (frame) {
-          document.getElementById('loading-gate').classList.add('hide');
-          clearInterval(checkIframe);
+            const shareUrl = `https://qexeron.uz/?symbol=${symbolToShare}`;
+            const text = encodeURIComponent(`📈 Men hozirda #${symbolToShare} juftligini tahlil qilyapman!\n\n✅ No Login Terminal\n✅ Barcha trading asboblari bepul\n\nGrafikni ko'rish: `);
+            
+            window.open(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${text}`, '_blank');
         }
-      }, 500);
-    }
-
-    // Tab retention (SEO uchun juda muhim)
-    window.onblur = () => { document.title = "📉 Narxlar o'zgaryapti! Qayt..."; };
-    window.onfocus = () => { document.title = "Qexeron | Live Terminal"; };
-
-    window.onload = initTerminal;
-  </script>
+    </script>
 </body>
 </html>
+
