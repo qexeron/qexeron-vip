@@ -1,0 +1,15 @@
+{
+  "name": "Qexeron",
+  "short_name": "Qexeron",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#131722",
+  "theme_color": "#131722",
+  "icons": [
+    {
+      "src": "6417DFC5-D79B-49EE-BC6C-A89E6BCAD2CE.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
