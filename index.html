@@ -14,6 +14,9 @@
     <meta property="og:url" content="https://qexeron.uz">
 
     <link rel="icon" href="6417DFC5-D79B-49EE-BC6C-A89E6BCAD2CE.png" type="image/png">
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#080a0f">
 
     <style>
         :root { --bg: #080a0f; --accent: #ffb400; }
@@ -42,6 +45,20 @@
         #share-btn:hover { background: #00a2ed; transform: translateX(-50%) translateY(-3px); box-shadow: 0 15px 30px rgba(0, 136, 204, 0.5); }
         #share-btn:active { transform: translateX(-50%) scale(0.95); }
 
+        /* 📲 INSTALL BUTTON STYLE */
+        #install-btn {
+            display: none; /* JS orqali chiqaramiz */
+            position: fixed; top: 15px; right: 15px; z-index: 1001;
+            background: rgba(255, 180, 0, 0.15); color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 8px 16px; border-radius: 8px;
+            font-size: 13px; font-weight: 600; cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        #install-btn:hover { background: var(--accent); color: #000; box-shadow: 0 0 15px rgba(255, 180, 0, 0.4); }
+
         #q-terminal { flex: 1; width: 100%; height: 100%; }
     </style>
 </head>
@@ -51,6 +68,8 @@
         <img src="6417DFC5-D79B-49EE-BC6C-A89E6BCAD2CE.png" class="master-logo" alt="Qexeron Logo">
         <div class="loader-bar"><div class="loader-fill"></div></div>
     </div>
+
+    <button id="install-btn">📲 Install App</button>
 
     <button id="share-btn" onclick="shareDynamicChart()">
         <span class="brand">QEXERON</span>
@@ -116,6 +135,35 @@
         // Tab focus logic for SEO and user retention
         window.onblur = () => { document.title = "📉 Market is moving..."; };
         window.onfocus = () => { document.title = "Qexeron | Professional Terminal"; };
+
+        /* --- PWA INSTALLATION LOGIC --- */
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+
+        let deferredPrompt;
+        const installBtn = document.getElementById('install-btn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBtn.style.display = 'block'; // Show button only if installable
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                installBtn.style.display = 'none';
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response to install prompt: ${outcome}`);
+                deferredPrompt = null;
+            }
+        });
+
+        window.addEventListener('appinstalled', () => {
+            installBtn.style.display = 'none';
+            console.log('PWA was installed');
+        });
     </script>
 </body>
 </html>
