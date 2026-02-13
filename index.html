@@ -2,70 +2,124 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
     <title>Qexeron | Free Professional Chart View Terminal</title>
     <meta name="description" content="Access all premium TradingView tools for free. No login required. Fast analysis for Crypto, Forex, and Gold on Qexeron.">
     <meta name="keywords" content="free tradingview, no login chart, btc analysis, forex terminal, qexeron">
     
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://qexeron.uz/">
     <meta property="og:title" content="Qexeron Terminal | Professional Charts">
     <meta property="og:description" content="No Login. All Tools Unlocked. High-Speed Terminal.">
     <meta property="og:image" content="6417DFC5-D79B-49EE-BC6C-A89E6BCAD2CE.png">
-    <meta property="og:url" content="https://qexeron.uz">
 
-    <link rel="icon" href="6417DFC5-D79B-49EE-BC6C-A89E6BCAD2CE.png" type="image/png">
-    
     <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="6417DFC5-D79B-49EE-BC6C-A89E6BCAD2CE.png" type="image/png">
+    <link rel="apple-touch-icon" href="6417DFC5-D79B-49EE-BC6C-A89E6BCAD2CE.png">
     <meta name="theme-color" content="#080a0f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <link rel="preconnect" href="https://s3.tradingview.com">
 
     <style>
-        :root { --bg: #080a0f; --accent: #ffb400; }
-        body { background: var(--bg); height: 100dvh; overflow: hidden; margin: 0; display: flex; flex-direction: column; font-family: -apple-system, system-ui, sans-serif; }
+        :root { 
+            --bg: #080a0f; 
+            --accent: #ffb400; 
+            --glass: rgba(20, 25, 35, 0.85);
+        }
         
-        /* 🌊 LOADING GATE */
-        #loading-gate { position: fixed; inset: 0; z-index: 9999; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.5s ease-out; }
-        #loading-gate.hide { opacity: 0; pointer-events: none; }
-        .master-logo { width: 110px; margin-bottom: 25px; filter: drop-shadow(0 0 15px rgba(255,180,0,0.2)); }
+        body { 
+            background: var(--bg); 
+            height: 100vh; 
+            width: 100vw;
+            overflow: hidden; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 🌊 LOADING SCREEN (SPEED HACK) */
+        #loading-gate { 
+            position: fixed; inset: 0; z-index: 9999; 
+            background: var(--bg); 
+            display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; 
+            transition: opacity 0.6s ease-out, visibility 0.6s;
+        }
+        #loading-gate.hide { opacity: 0; visibility: hidden; pointer-events: none; }
         
-        .loader-bar { width: 150px; height: 2px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; position: relative; }
-        .loader-fill { position: absolute; width: 50%; height: 100%; background: var(--accent); animation: slide 1.2s infinite ease-in-out; }
-        @keyframes slide { 0% { left: -50%; } 100% { left: 100%; } }
+        .master-logo { 
+            width: 90px; height: 90px; 
+            margin-bottom: 25px; 
+            filter: drop-shadow(0 0 20px rgba(255,180,0,0.15)); 
+        }
+        
+        .loader-track { 
+            width: 140px; height: 3px; 
+            background: rgba(255,255,255,0.05); 
+            border-radius: 10px; overflow: hidden; position: relative; 
+        }
+        .loader-fill { 
+            position: absolute; width: 40%; height: 100%; 
+            background: var(--accent); 
+            border-radius: 10px;
+            animation: dash 1.5s infinite ease-in-out; 
+        }
+        @keyframes dash { 0% { left: -40%; } 100% { left: 100%; } }
+        .loading-text {
+            margin-top: 15px; color: #555; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; font-weight: 600;
+        }
+
+        /* 📲 INSTALL BUTTON (PWA) */
+        #install-btn {
+            display: none; 
+            position: fixed; top: 15px; right: 15px; z-index: 1001;
+            background: rgba(255, 180, 0, 0.1); 
+            color: var(--accent);
+            border: 1px solid rgba(255, 180, 0, 0.3);
+            padding: 8px 16px; border-radius: 8px;
+            font-size: 12px; font-weight: 700; cursor: pointer;
+            backdrop-filter: blur(10px);
+            text-transform: uppercase; letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        #install-btn:hover { background: var(--accent); color: #000; box-shadow: 0 0 20px rgba(255, 180, 0, 0.4); }
 
         /* ✈️ SHARE BUTTON */
         #share-btn {
-            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
+            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%) translateY(100px);
             z-index: 1000; background: #0088cc; color: #fff; border: none;
-            padding: 10px 28px; border-radius: 50px; font-weight: bold;
-            cursor: pointer; display: none; flex-direction: column; align-items: center;
-            box-shadow: 0 10px 25px rgba(0, 136, 204, 0.3);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 12px 30px; border-radius: 50px; 
+            cursor: pointer; display: flex; flex-direction: column; align-items: center;
+            box-shadow: 0 10px 30px rgba(0, 136, 204, 0.4);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
         }
-        #share-btn span.brand { font-size: 9px; opacity: 0.7; letter-spacing: 2px; margin-bottom: 2px; font-weight: 900; }
-        #share-btn span.action { font-size: 13px; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+        #share-btn.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        #share-btn:active { transform: translateX(-50%) scale(0.95); }
+        
+        #share-btn span.brand { font-size: 9px; opacity: 0.8; letter-spacing: 2px; margin-bottom: 2px; font-weight: 900; }
+        #share-btn span.action { font-size: 14px; text-transform: uppercase; display: flex; align-items: center; gap: 8px; font-weight: 700; }
 
-        /* 📲 INSTALL BUTTON */
-        #install-btn {
-            display: none;
-            position: fixed; top: 15px; right: 15px; z-index: 1001;
-            background: rgba(255, 180, 0, 0.15); color: var(--accent);
-            border: 1px solid var(--accent);
-            padding: 8px 16px; border-radius: 8px;
-            font-size: 13px; font-weight: 600; cursor: pointer;
-            backdrop-filter: blur(5px);
-            transition: all 0.3s ease;
-            text-transform: uppercase; letter-spacing: 0.5px;
+        /* TERMINAL CONTAINER */
+        #q-terminal { 
+            flex: 1; width: 100%; height: 100%; 
+            opacity: 0; transition: opacity 1s ease;
         }
-
-        #q-terminal { flex: 1; width: 100%; height: 100%; }
+        #q-terminal.visible { opacity: 1; }
     </style>
 </head>
 <body>
 
     <div id="loading-gate">
-        <img src="6417DFC5-D79B-49EE-BC6C-A89E6BCAD2CE.png" class="master-logo" alt="Qexeron Logo">
-        <div class="loader-bar"><div class="loader-fill"></div></div>
+        <img src="6417DFC5-D79B-49EE-BC6C-A89E6BCAD2CE.png" class="master-logo" alt="Qexeron">
+        <div class="loader-track"><div class="loader-fill"></div></div>
+        <p class="loading-text">Initializing Terminal...</p>
     </div>
 
     <button id="install-btn">📲 Install App</button>
@@ -78,79 +132,106 @@
     <main id="q-terminal"></main>
 
     <script>
-        // 1. Skriptni dinamik tarzda yuklaymiz (Render-blocking bo'lmasligi uchun)
+        // --- 1. CONFIGURATION ---
+        const LAZY_LOAD_DELAY = 2500; // 2.5 sekund (Google uchun optimal)
+        const DEFAULT_SYMBOL = "BINANCE:BTCUSDT";
+
+        // --- 2. CHART LOADER ---
         function loadTradingView() {
+            // Skriptni dinamik yaratamiz
             const script = document.createElement('script');
             script.src = 'https://s3.tradingview.com/tv.js';
-            script.async = true; // Asinxron yuklash
-            script.onload = initWidget; // Yuklangandan keyin ishga tushirish
+            script.async = true;
+            
+            script.onload = () => {
+                const urlParams = new URLSearchParams(window.location.search);
+                let rawSymbol = urlParams.get('symbol') || "BTCUSDT";
+                let activeSymbol = rawSymbol.includes(':') ? rawSymbol : "BINANCE:" + rawSymbol;
+
+                new TradingView.widget({
+                    "autosize": true,
+                    "symbol": activeSymbol,
+                    "interval": "15",
+                    "timezone": "Asia/Tashkent",
+                    "theme": "dark",
+                    "style": "1",
+                    "locale": "en",
+                    "toolbar_bg": "#080a0f",
+                    "enable_publishing": false,
+                    "allow_symbol_change": true,
+                    "container_id": "q-terminal",
+                    "hide_side_toolbar": false,
+                    "details": true,
+                    "hotlist": true,
+                    "calendar": true,
+                    "show_popup_button": true,
+                    "popup_width": "1000",
+                    "popup_height": "650",
+                    "overrides": {
+                        "paneProperties.background": "#080a0f",
+                        "mainSeriesProperties.candleStyle.upColor": "#00b894",
+                        "mainSeriesProperties.candleStyle.downColor": "#ff4757"
+                    }
+                });
+
+                // UI Animation: Chart yuklanganda ochiladi
+                setTimeout(() => {
+                    document.getElementById('loading-gate').classList.add('hide');
+                    document.getElementById('q-terminal').classList.add('visible');
+                    document.getElementById('share-btn').classList.add('show');
+                }, 800);
+            };
+            
             document.body.appendChild(script);
         }
 
-        function initWidget() {
-            const urlParams = new URLSearchParams(window.location.search);
-            let activeSymbol = urlParams.get('symbol') || "BTCUSDT";
+        // --- 3. PERFORMANCE STRATEGY ---
+        // Sahifa to'liq yuklangandan keyin, biroz kutib grafikni yuklaymiz
+        // Bu Google PageSpeed ballini oshiradi
+        window.addEventListener('load', () => {
+            setTimeout(loadTradingView, LAZY_LOAD_DELAY);
+        });
 
-            new TradingView.widget({
-                "autosize": true,
-                "symbol": activeSymbol.includes(':') ? activeSymbol : "BINANCE:" + activeSymbol,
-                "interval": "15",
-                "timezone": "Asia/Tashkent",
-                "theme": "dark",
-                "style": "1",
-                "locale": "en",
-                "toolbar_bg": "#080a0f",
-                "enable_publishing": false,
-                "allow_symbol_change": true,
-                "container_id": "q-terminal",
-                "hide_side_toolbar": false,
-                "details": true,
-                "hotlist": true,
-                "calendar": true,
-                "show_popup_button": true,
-                "popup_width": "1000",
-                "popup_height": "650"
-            });
-
-            // Loadingni o'chiramiz
-            setTimeout(() => {
-                document.getElementById('loading-gate').classList.add('hide');
-                document.getElementById('share-btn').style.display = 'flex';
-            }, 1500); // Sal kechroq ochamiz, grafik to'liq yuklansin
-        }
-
-        // Sahifa to'liq yuklangandan keyin grafikni chaqiramiz
-        window.addEventListener('load', loadTradingView);
-
-        // Share funksiyasi
+        // --- 4. SHARE FUNCTION ---
         function shareDynamicChart() {
-            let symbolToShare = "BTCUSDT"; // Fallback
-            const iframe = document.querySelector('iframe');
-            
-            // Try to catch the live symbol
-            if (iframe) {
-                 // Oddiyroq qilib URLdan olamiz, xato bo'lmasligi uchun
-                 const urlParams = new URLSearchParams(window.location.search);
-                 if(urlParams.get('symbol')) symbolToShare = urlParams.get('symbol');
-            }
+            let symbol = "BTCUSDT";
+            try {
+                // URLdan olish eng ishonchli usul
+                const params = new URLSearchParams(window.location.search);
+                if(params.get('symbol')) symbol = params.get('symbol');
+                // Yoki iframedan (backup)
+                else {
+                    const iframe = document.querySelector('iframe');
+                    if(iframe && iframe.title) {
+                        const parts = iframe.title.split(' ');
+                        if(parts.length > 0) symbol = parts[0];
+                    }
+                }
+            } catch(e) {}
 
-            const shareUrl = `https://qexeron.uz/?symbol=${symbolToShare}`;
-            const message = `📈 Analyzing #${symbolToShare} on Qexeron Terminal!\n\n✅ No Login Required\n✅ Fast Charts\n\nLink: `;
+            // Toza simvol nomini ajratib olish (BINANCE:BTCUSDT -> BTCUSDT)
+            const cleanSymbol = symbol.includes(':') ? symbol.split(':')[1] : symbol;
+
+            const link = `https://qexeron.uz/?symbol=${cleanSymbol}`;
+            const msg = `🚀 Analyzing #${cleanSymbol} on Qexeron Terminal!\n\n✅ Professional Charts\n✅ No Login Required\n\nCheck here: `;
             
-            window.open(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(message)}`, '_blank');
+            window.open(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(msg)}`, '_blank');
         }
 
-        // --- PWA LOGIC ---
+        // --- 5. PWA INSTALL LOGIC ---
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
+            navigator.serviceWorker.register('sw.js')
+                .then(() => console.log('Service Worker Registered'));
         }
 
         let deferredPrompt;
         const installBtn = document.getElementById('install-btn');
 
         window.addEventListener('beforeinstallprompt', (e) => {
+            // Brauzerning standart oynasini to'xtatamiz
             e.preventDefault();
             deferredPrompt = e;
+            // Bizning chiroyli tugmani chiqaramiz
             installBtn.style.display = 'block';
         });
 
@@ -158,13 +239,21 @@
             if (deferredPrompt) {
                 installBtn.style.display = 'none';
                 deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`Install prompt outcome: ${outcome}`);
                 deferredPrompt = null;
             }
         });
 
         window.addEventListener('appinstalled', () => {
             installBtn.style.display = 'none';
+            console.log('Qexeron App Installed!');
         });
+        
+        // --- 6. TAB TITLE DYNAMICS ---
+        window.onblur = () => { document.title = "📉 Market is moving..."; };
+        window.onfocus = () => { document.title = "Qexeron | Professional Terminal"; };
+
     </script>
 </body>
 </html>
