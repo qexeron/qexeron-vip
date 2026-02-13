@@ -18,6 +18,8 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#080a0f">
 
+    <link rel="preconnect" href="https://s3.tradingview.com">
+
     <style>
         :root { --bg: #080a0f; --accent: #ffb400; }
         body { background: var(--bg); height: 100dvh; overflow: hidden; margin: 0; display: flex; flex-direction: column; font-family: -apple-system, system-ui, sans-serif; }
@@ -31,7 +33,7 @@
         .loader-fill { position: absolute; width: 50%; height: 100%; background: var(--accent); animation: slide 1.2s infinite ease-in-out; }
         @keyframes slide { 0% { left: -50%; } 100% { left: 100%; } }
 
-        /* ✈️ REBRANDED SHARE BUTTON */
+        /* ✈️ SHARE BUTTON */
         #share-btn {
             position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
             z-index: 1000; background: #0088cc; color: #fff; border: none;
@@ -42,12 +44,10 @@
         }
         #share-btn span.brand { font-size: 9px; opacity: 0.7; letter-spacing: 2px; margin-bottom: 2px; font-weight: 900; }
         #share-btn span.action { font-size: 13px; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
-        #share-btn:hover { background: #00a2ed; transform: translateX(-50%) translateY(-3px); box-shadow: 0 15px 30px rgba(0, 136, 204, 0.5); }
-        #share-btn:active { transform: translateX(-50%) scale(0.95); }
 
-        /* 📲 INSTALL BUTTON STYLE */
+        /* 📲 INSTALL BUTTON */
         #install-btn {
-            display: none; /* JS orqali chiqaramiz */
+            display: none;
             position: fixed; top: 15px; right: 15px; z-index: 1001;
             background: rgba(255, 180, 0, 0.15); color: var(--accent);
             border: 1px solid var(--accent);
@@ -57,7 +57,6 @@
             transition: all 0.3s ease;
             text-transform: uppercase; letter-spacing: 0.5px;
         }
-        #install-btn:hover { background: var(--accent); color: #000; box-shadow: 0 0 15px rgba(255, 180, 0, 0.4); }
 
         #q-terminal { flex: 1; width: 100%; height: 100%; }
     </style>
@@ -78,65 +77,70 @@
     
     <main id="q-terminal"></main>
 
-    <script src="https://s3.tradingview.com/tv.js"></script>
     <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        let activeSymbol = urlParams.get('symbol') || "BTCUSDT";
+        // 1. Skriptni dinamik tarzda yuklaymiz (Render-blocking bo'lmasligi uchun)
+        function loadTradingView() {
+            const script = document.createElement('script');
+            script.src = 'https://s3.tradingview.com/tv.js';
+            script.async = true; // Asinxron yuklash
+            script.onload = initWidget; // Yuklangandan keyin ishga tushirish
+            document.body.appendChild(script);
+        }
 
-        // TradingView Initialization
-        const widget = new TradingView.widget({
-            "autosize": true,
-            "symbol": activeSymbol.includes(':') ? activeSymbol : "BINANCE:" + activeSymbol,
-            "interval": "15",
-            "timezone": "Asia/Tashkent",
-            "theme": "dark",
-            "style": "1",
-            "locale": "en",
-            "toolbar_bg": "#080a0f",
-            "enable_publishing": false,
-            "allow_symbol_change": true,
-            "container_id": "q-terminal",
-            "hide_side_toolbar": false, // All drawing tools enabled
-            "details": true, // Right side details enabled
-            "hotlist": true,
-            "calendar": true,
-            "show_popup_button": true,
-            "popup_width": "1000",
-            "popup_height": "650"
-        });
+        function initWidget() {
+            const urlParams = new URLSearchParams(window.location.search);
+            let activeSymbol = urlParams.get('symbol') || "BTCUSDT";
 
-        // Smart loading logic
-        const check = setInterval(() => {
-            if(document.querySelector('iframe')) {
-                setTimeout(() => {
-                    document.getElementById('loading-gate').classList.add('hide');
-                    document.getElementById('share-btn').style.display = 'flex';
-                }, 1000);
-                clearInterval(check);
-            }
-        }, 1000);
+            new TradingView.widget({
+                "autosize": true,
+                "symbol": activeSymbol.includes(':') ? activeSymbol : "BINANCE:" + activeSymbol,
+                "interval": "15",
+                "timezone": "Asia/Tashkent",
+                "theme": "dark",
+                "style": "1",
+                "locale": "en",
+                "toolbar_bg": "#080a0f",
+                "enable_publishing": false,
+                "allow_symbol_change": true,
+                "container_id": "q-terminal",
+                "hide_side_toolbar": false,
+                "details": true,
+                "hotlist": true,
+                "calendar": true,
+                "show_popup_button": true,
+                "popup_width": "1000",
+                "popup_height": "650"
+            });
 
+            // Loadingni o'chiramiz
+            setTimeout(() => {
+                document.getElementById('loading-gate').classList.add('hide');
+                document.getElementById('share-btn').style.display = 'flex';
+            }, 1500); // Sal kechroq ochamiz, grafik to'liq yuklansin
+        }
+
+        // Sahifa to'liq yuklangandan keyin grafikni chaqiramiz
+        window.addEventListener('load', loadTradingView);
+
+        // Share funksiyasi
         function shareDynamicChart() {
-            let symbolToShare = activeSymbol.split(':').pop(); 
+            let symbolToShare = "BTCUSDT"; // Fallback
             const iframe = document.querySelector('iframe');
             
-            // Try to catch the live symbol from iframe title
-            if (iframe && iframe.title && !iframe.title.includes("TradingView")) {
-                const titlePart = iframe.title.split(' ')[0];
-                if(titlePart.length > 2) symbolToShare = titlePart;
+            // Try to catch the live symbol
+            if (iframe) {
+                 // Oddiyroq qilib URLdan olamiz, xato bo'lmasligi uchun
+                 const urlParams = new URLSearchParams(window.location.search);
+                 if(urlParams.get('symbol')) symbolToShare = urlParams.get('symbol');
             }
 
             const shareUrl = `https://qexeron.uz/?symbol=${symbolToShare}`;
-            const message = `📈 I'm analyzing #${symbolToShare} on Qexeron Terminal!\n\n✅ No Login Required\n✅ All Technical Tools Unlocked\n✅ High-Speed Charts\n\nView my analysis here: `;
+            const message = `📈 Analyzing #${symbolToShare} on Qexeron Terminal!\n\n✅ No Login Required\n✅ Fast Charts\n\nLink: `;
             
             window.open(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(message)}`, '_blank');
         }
 
-        // Tab focus logic for SEO and user retention
-        window.onblur = () => { document.title = "📉 Market is moving..."; };
-        window.onfocus = () => { document.title = "Qexeron | Professional Terminal"; };
-
-        /* --- PWA INSTALLATION LOGIC --- */
+        // --- PWA LOGIC ---
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js');
         }
@@ -147,22 +151,19 @@
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            installBtn.style.display = 'block'; // Show button only if installable
+            installBtn.style.display = 'block';
         });
 
         installBtn.addEventListener('click', async () => {
             if (deferredPrompt) {
                 installBtn.style.display = 'none';
                 deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                console.log(`User response to install prompt: ${outcome}`);
                 deferredPrompt = null;
             }
         });
 
         window.addEventListener('appinstalled', () => {
             installBtn.style.display = 'none';
-            console.log('PWA was installed');
         });
     </script>
 </body>
