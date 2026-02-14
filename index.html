@@ -16,12 +16,28 @@
     <link rel="preconnect" href="https://s3.tradingview.com">
 
     <style>
-        :root { --bg: #080a0f; --accent: #ffb400; }
+        :root { 
+            --bg: #080a0f; 
+            --accent: #ffb400; 
+            --text-color: #ffffff;
+            --modal-bg: #131722;
+            --btn-bg: rgba(255, 255, 255, 0.1);
+        }
+
+        /* ☀️ LIGHT MODE VARIABLES */
+        body.light-mode {
+            --bg: #f0f3fa;
+            --text-color: #000000;
+            --modal-bg: #ffffff;
+            --btn-bg: rgba(0, 0, 0, 0.1);
+        }
         
         body { 
             background: var(--bg); height: 100vh; width: 100vw; 
             overflow: hidden; margin: 0; display: flex; flex-direction: column; 
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            color: var(--text-color);
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         /* 🎬 1. INTRO ANIMATION */
@@ -48,43 +64,32 @@
         @keyframes tracking-in { 0% { letter-spacing: -0.5em; opacity: 0; filter: blur(10px); } 40% { opacity: 0.6; } 100% { opacity: 1; filter: blur(0px); letter-spacing: 5px; } }
         @keyframes fade-up { 0% { transform: translateY(20px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
 
-        /* 🤖 TUGMALAR STILI (UMUMIY) */
+        /* 🤖 TUGMALAR STILI (PC) */
         .floating-btn {
-            position: fixed; right: 20px; z-index: 1000;
+            position: fixed; 
+            left: 20px; /* Chap tomon */
+            z-index: 1000;
             width: 55px; height: 55px;
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 24px; cursor: pointer; color: #fff; border: none;
-            transition: transform 0.2s;
+            font-size: 24px; cursor: pointer; color: var(--text-color); border: none;
+            transition: transform 0.2s, background 0.3s;
         }
         .floating-btn:active { transform: scale(0.9); }
 
-        /* 🔍 SEARCH BUTTON */
-        #search-btn {
-            bottom: 240px; /* Joylashuv */
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255,255,255,0.2); 
-            backdrop-filter: blur(10px);
-        }
-
-        /* 📅 CALENDAR BUTTON (YANGI) */
-        #cal-btn {
-            bottom: 170px; /* Search va AI orasida */
-            background: linear-gradient(135deg, #2962ff, #8854d0); /* Ko'k-Binafsha */
-            box-shadow: 0 0 20px rgba(41, 98, 255, 0.5);
-            animation: pulse-blue 3s infinite;
-        }
+        /* PC uchun joylashuv */
+        #theme-btn { bottom: 100px; background: var(--btn-bg); border: 1px solid rgba(128,128,128,0.2); backdrop-filter: blur(10px); }
+        
+        #ai-btn { bottom: 170px; background: linear-gradient(135deg, #00b894, #00cec9); box-shadow: 0 0 20px rgba(0, 184, 148, 0.5); animation: pulse-green 2s infinite; color: #fff; }
+        
+        #cal-btn { bottom: 240px; background: linear-gradient(135deg, #2962ff, #8854d0); box-shadow: 0 0 20px rgba(41, 98, 255, 0.5); animation: pulse-blue 3s infinite; color: #fff; }
+        
+        #search-btn { bottom: 310px; background: var(--btn-bg); border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(10px); }
+        
+        @keyframes pulse-green { 0% { box-shadow: 0 0 0 0 rgba(0, 184, 148, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(0, 184, 148, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 184, 148, 0); } }
         @keyframes pulse-blue { 0% { box-shadow: 0 0 0 0 rgba(41, 98, 255, 0.6); } 70% { box-shadow: 0 0 0 10px rgba(41, 98, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(41, 98, 255, 0); } }
 
-        /* 🤖 AI BUTTON */
-        #ai-btn {
-            bottom: 100px; 
-            background: linear-gradient(135deg, #00b894, #00cec9); /* Yashil */
-            box-shadow: 0 0 20px rgba(0, 184, 148, 0.5);
-            animation: pulse-green 2s infinite;
-        }
-        @keyframes pulse-green { 0% { box-shadow: 0 0 0 0 rgba(0, 184, 148, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(0, 184, 148, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 184, 148, 0); } }
 
-        /* MODALLAR (UMUMIY) */
+        /* MODALLAR */
         .modal-overlay {
             position: fixed; inset: 0; z-index: 1005;
             background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
@@ -95,7 +100,7 @@
 
         .modal-content {
             width: 90%; max-width: 450px; height: 550px;
-            background: #131722; border-radius: 20px;
+            background: var(--modal-bg); border-radius: 20px;
             border: 1px solid rgba(255,180,0,0.2);
             position: relative; overflow: hidden;
             transform: translateY(20px); transition: 0.3s;
@@ -103,25 +108,25 @@
         }
         .modal-overlay.open .modal-content { transform: translateY(0); }
         
-        .close-modal { position: absolute; top: 15px; right: 20px; color: rgba(255,255,255,0.5); font-size: 28px; cursor: pointer; z-index: 20; }
+        .close-modal { position: absolute; top: 15px; right: 20px; color: var(--text-color); opacity: 0.5; font-size: 28px; cursor: pointer; z-index: 20; }
         
         /* 🔍 SEARCH STYLES */
         .search-box { width: 80%; max-width: 400px; background: transparent; border-bottom: 2px solid var(--accent); }
-        #symbol-input { width: 100%; padding: 15px 0; background: transparent; border: none; outline: none; color: #fff; font-size: 24px; text-transform: uppercase; font-weight: bold; text-align: center; }
+        #symbol-input { width: 100%; padding: 15px 0; background: transparent; border: none; outline: none; color: var(--text-color); font-size: 24px; text-transform: uppercase; font-weight: bold; text-align: center; }
         .search-tips { margin-top: 20px; display: flex; gap: 10px; justify-content: center; }
-        .tip-chip { padding: 8px 15px; background: rgba(255,255,255,0.1); border-radius: 20px; color: #aaa; font-size: 12px; cursor: pointer; border: 1px solid transparent; }
-        .tip-chip:hover { border-color: var(--accent); color: #fff; }
+        .tip-chip { padding: 8px 15px; background: var(--btn-bg); border-radius: 20px; color: #aaa; font-size: 12px; cursor: pointer; border: 1px solid transparent; }
+        .tip-chip:hover { border-color: var(--accent); color: var(--text-color); }
 
         /* 💧 WATERMARK */
-        .branding-watermark { position: absolute; bottom: 0; left: 0; right: 0; height: 40px; background: linear-gradient(to top, #000, transparent); display: flex; align-items: center; justify-content: center; z-index: 10; pointer-events: none; }
-        .branding-watermark span { font-weight: 900; font-size: 16px; letter-spacing: 6px; background: linear-gradient(to right, #00b894, #fff); -webkit-background-clip: text; color: transparent; opacity: 0.8; text-transform: uppercase; }
+        .branding-watermark { position: absolute; bottom: 0; left: 0; right: 0; height: 40px; background: linear-gradient(to top, var(--modal-bg), transparent); display: flex; align-items: center; justify-content: center; z-index: 10; pointer-events: none; }
+        .branding-watermark span { font-weight: 900; font-size: 16px; letter-spacing: 6px; background: linear-gradient(to right, #00b894, var(--text-color)); -webkit-background-clip: text; color: transparent; opacity: 0.8; text-transform: uppercase; }
 
         /* 📲 INSTALL & SHARE */
         #install-btn { display: none; position: fixed; top: 15px; right: 15px; z-index: 1001; background: rgba(255,180,0,0.15); color: var(--accent); border: 1px solid var(--accent); padding: 6px 14px; border-radius: 8px; font-weight: bold; font-size: 12px; backdrop-filter: blur(5px); }
         #share-btn { position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); z-index: 1000; background: #2962ff; color: white; border: none; padding: 12px 35px; border-radius: 50px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 30px rgba(41, 98, 255, 0.4); letter-spacing: 1px; font-size: 13px; }
 
         /* BOTTOM BRAND BAR */
-        #bottom-brand-bar { width: 100%; height: 35px; background: var(--bg); display: flex; align-items: center; justify-content: center; border-top: 1px solid rgba(255, 180, 0, 0.1); z-index: 900; }
+        #bottom-brand-bar { width: 100%; height: 35px; background: var(--bg); display: flex; align-items: center; justify-content: center; border-top: 1px solid rgba(128, 128, 128, 0.1); z-index: 900; }
         .gold-text-shimmer { font-weight: 900; font-size: 14px; letter-spacing: 4px; text-transform: uppercase; background: linear-gradient(to right, #a87b00 0%, #ffd700 50%, #a87b00 100%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: goldShine 3s linear infinite reverse; }
         @keyframes goldShine { to { background-position: 200% center; } }
 
@@ -132,12 +137,22 @@
             .q-sub-text { font-size: 8px; letter-spacing: 2px; }
             .modal-content { width: 95%; height: 60%; max-height: 500px; }
             
-            /* Mobilda tugmalarni joylash */
-            #ai-btn { width: 45px; height: 45px; font-size: 20px; bottom: 100px; right: 15px; }
-            #cal-btn { width: 45px; height: 45px; font-size: 20px; bottom: 155px; right: 15px; } /* AI tepasida */
-            #search-btn { width: 45px; height: 45px; font-size: 18px; bottom: 210px; right: 15px; } /* Cal tepasida */
+            /* ⚠️ MOBIL SOZLAMALAR: CHAP VA PASTDA */
+            .floating-btn {
+                left: 10px !important;   /* Chapga taqaymiz */
+                right: auto !important;
+                width: 42px;             /* Kichikroq qilamiz */
+                height: 42px;
+                font-size: 20px;
+            }
+
+            /* Juda zich va past joylashuv */
+            #theme-btn { bottom: 50px; }  /* Share tugmasi bilan bir qatorda */
+            #ai-btn { bottom: 100px; }
+            #cal-btn { bottom: 150px; }
+            #search-btn { bottom: 200px; } /* Bu teparoqda, lekin instrumentlarga tegmaydi */
             
-            #share-btn { bottom: 45px; }
+            #share-btn { bottom: 45px; font-size: 11px; padding: 10px 25px; } /* Share tugmasini ham biroz ixchamladim */
             #bottom-brand-bar { height: 30px; }
             .gold-text-shimmer { font-size: 12px; letter-spacing: 3px; }
         }
@@ -151,10 +166,9 @@
     </div>
 
     <button id="search-btn" class="floating-btn" onclick="openSearch()">🔍</button>
-
     <button id="cal-btn" class="floating-btn" onclick="openCalendar()">📅</button>
-
     <button id="ai-btn" class="floating-btn" onclick="openAI()">🤖</button>
+    <button id="theme-btn" class="floating-btn" onclick="toggleTheme()">🌗</button>
 
 
     <div id="search-modal" class="modal-overlay" onclick="closeModals(event)">
@@ -198,49 +212,66 @@
     <script>
         const LAZY_DELAY = 2200; 
         
-        // 1. URL dan parani o'qish
+        // URL dan parani o'qish
         const urlParams = new URLSearchParams(window.location.search);
         let rawSymbol = urlParams.get('symbol'); 
-        
         let currentSymbol = "BINANCE:BTCUSDT"; 
 
         if (rawSymbol) {
-            if (rawSymbol.includes(':')) {
-                currentSymbol = rawSymbol;
-            } 
-            else if (rawSymbol === 'XAUUSD' || rawSymbol === 'GOLD') {
-                currentSymbol = "OANDA:XAUUSD";
-            }
-            else {
-                currentSymbol = "BINANCE:" + rawSymbol;
-            }
+            if (rawSymbol.includes(':')) { currentSymbol = rawSymbol; } 
+            else if (rawSymbol === 'XAUUSD' || rawSymbol === 'GOLD') { currentSymbol = "OANDA:XAUUSD"; }
+            else { currentSymbol = "BINANCE:" + rawSymbol; }
         }
 
-        // 2. GRAFIKNI YUKLASH
+        // 🌗 THEME MANAGEMENT
+        let isDark = true;
+        const savedTheme = localStorage.getItem('qexeron_theme');
+        if(savedTheme === 'light') {
+            isDark = false;
+            document.body.classList.add('light-mode');
+        }
+
+        function toggleTheme() {
+            isDark = !isDark;
+            if(isDark) {
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('qexeron_theme', 'dark');
+            } else {
+                document.body.classList.add('light-mode');
+                localStorage.setItem('qexeron_theme', 'light');
+            }
+            loadWidget();
+        }
+
+        // 2. GRAFIKNI YUKLASH FUNKSIYASI
+        function loadWidget() {
+            document.getElementById('q-terminal').innerHTML = ""; 
+            new TradingView.widget({
+                "autosize": true,
+                "symbol": currentSymbol,
+                "interval": "15",
+                "timezone": "Asia/Tashkent",
+                "theme": isDark ? "dark" : "light",
+                "style": "1",
+                "locale": "en",
+                "toolbar_bg": isDark ? "#080a0f" : "#f0f3fa",
+                "enable_publishing": false,
+                "allow_symbol_change": true,
+                "container_id": "q-terminal",
+                "hide_side_toolbar": false, // Toolbar chap tomonda
+                "details": false, "hotlist": false, "calendar": false  
+            });
+        }
+
         window.addEventListener('load', () => {
             setTimeout(() => {
-                new TradingView.widget({
-                    "autosize": true,
-                    "symbol": currentSymbol,
-                    "interval": "15",
-                    "timezone": "Asia/Tashkent",
-                    "theme": "dark",
-                    "style": "1",
-                    "locale": "en",
-                    "toolbar_bg": "#080a0f",
-                    "enable_publishing": false,
-                    "allow_symbol_change": true,
-                    "container_id": "q-terminal",
-                    "hide_side_toolbar": false,
-                    "details": false, "hotlist": false, "calendar": false  
-                });
+                loadWidget();
                 document.getElementById('loading-gate').classList.add('hide');
             }, LAZY_DELAY);
         });
 
         // MODALLARNI BOSHQARISH
         function closeModals(e) {
-            // Agar orqa fonga yoki X tugmasiga bosilsa yopiladi
             if (e && (e.target.classList.contains('modal-overlay') || e.target.classList.contains('close-modal'))) {
                 document.querySelectorAll('.modal-overlay').forEach(el => el.classList.remove('open'));
             }
@@ -248,7 +279,7 @@
 
         // 🔍 SEARCH
         function openSearch() {
-            closeModals(); // Boshqalarini yopish
+            closeModals();
             document.getElementById('search-modal').classList.add('open');
             document.getElementById('symbol-input').focus();
         }
@@ -267,7 +298,7 @@
             }
         });
 
-        // 📅 CALENDAR FUNKSIYASI
+        // 📅 CALENDAR
         function openCalendar() {
             closeModals();
             document.getElementById('cal-modal').classList.add('open');
@@ -279,11 +310,11 @@
             script.innerHTML = JSON.stringify({
                 "width": "100%",
                 "height": "100%",
-                "colorTheme": "dark",
+                "colorTheme": isDark ? "dark" : "light",
                 "isTransparent": true,
                 "locale": "en",
-                "importanceFilter": "-1,0,1", // Barcha muhimlik darajalari
-                "currencyFilter": "USD,EUR,GBP,JPY,AUD,CAD" // Faqat asosiy valyutalar
+                "importanceFilter": "-1,0,1",
+                "currencyFilter": "USD,EUR,GBP,JPY,AUD,CAD"
             });
             document.getElementById('calendar-container').appendChild(script);
         }
@@ -311,7 +342,7 @@
                 "showIntervalTabs": true,
                 "displayMode": "single",
                 "locale": "en",
-                "colorTheme": "dark"
+                "colorTheme": isDark ? "dark" : "light"
             });
             document.getElementById('technical-analysis-container').appendChild(script);
         }
