@@ -1,4 +1,4 @@
-const CACHE_NAME = 'qexeron-v6-ultra'; // 🔥 Versiyani yangiladik!
+const CACHE_NAME = 'qexeron-v7-ultra'; // 🔥 Versiyani yangiladik!
 const ASSETS = [
   '/',
   '/index.html',
