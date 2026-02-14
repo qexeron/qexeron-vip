@@ -1,3 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <title>Qexeron | AI Trading Terminal</title>
+    
+    <meta name="description" content="AI-powered crypto analysis on Qexeron. Free professional charts.">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="6417DFC5-D79B-49EE-BC6C-A89E6BCAD2CE.png" type="image/png">
+    <meta name="theme-color" content="#080a0f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <link rel="preconnect" href="https://s3.tradingview.com">
+
+    <style>
+        :root { --bg: #080a0f; --accent: #ffb400; }
+        
+        body { 
+            background: var(--bg); height: 100vh; width: 100vw; 
+            overflow: hidden; margin: 0; display: flex; flex-direction: column; 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+        }
+
+        /* 🎬 1. INTRO ANIMATION */
+        #loading-gate { 
+            position: fixed; inset: 0; z-index: 9999; 
+            background: var(--bg); display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; 
+            transition: opacity 0.8s ease-out; 
+        }
+        #loading-gate.hide { opacity: 0; pointer-events: none; }
+
+        .q-brand-anim {
+            font-size: 42px; font-weight: 900; color: transparent;
+            background: linear-gradient(to right, #fff, var(--accent));
+            -webkit-background-clip: text;
+            letter-spacing: 2px; text-transform: uppercase;
+            animation: tracking-in 1.2s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+        }
+        .q-sub-text {
+            margin-top: 10px; color: rgba(255,255,255,0.4);
+            font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+            animation: fade-up 1.5s ease 0.5s both;
+        }
+        @keyframes tracking-in { 0% { letter-spacing: -0.5em; opacity: 0; filter: blur(10px); } 40% { opacity: 0.6; } 100% { opacity: 1; filter: blur(0px); letter-spacing: 5px; } }
+        @keyframes fade-up { 0% { transform: translateY(20px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+
+        /* 🔍 2. SEARCH BUTTON */
+        #search-btn {
+            position: fixed; bottom: 170px; right: 20px; z-index: 1000;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff; border: 1px solid rgba(255,255,255,0.2); 
+            width: 55px; height: 55px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 24px; cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.2s;
+        }
+        #search-btn:active { transform: scale(0.9); background: rgba(255,255,255,0.2); }
+
+        /* 🔍 SEARCH MODAL */
+        #search-modal {
+            position: fixed; inset: 0; z-index: 1005;
+            background: rgba(0,0,0,0.9); backdrop-filter: blur(5px);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: 0.3s;
+        }
+        #search-modal.open { opacity: 1; pointer-events: all; }
+
+        .search-box {
+            width: 80%; max-width: 400px;
+            background: transparent; border-bottom: 2px solid var(--accent);
+        }
+        #symbol-input {
+            width: 100%; padding: 15px 0;
+            background: transparent; border: none; outline: none;
+            color: #fff; font-size: 24px; text-transform: uppercase; font-weight: bold; text-align: center;
+        }
+        #symbol-input::placeholder { color: rgba(255,255,255,0.3); }
+        
+        .search-tips { margin-top: 20px; display: flex; gap: 10px; justify-content: center; }
+        .tip-chip {
+            padding: 8px 15px; background: rgba(255,255,255,0.1); border-radius: 20px;
+            color: #aaa; font-size: 12px; cursor: pointer; border: 1px solid transparent;
+        }
+        .tip-chip:hover { border-color: var(--accent); color: #fff; }
+
+        /* 🤖 3. AI BUTTON */
+        #ai-btn {
+            position: fixed; bottom: 100px; right: 20px; z-index: 1000;
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            color: #fff; border: none; width: 55px; height: 55px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 26px; cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 184, 148, 0.5);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(0, 184, 148, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(0, 184, 148, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 184, 148, 0); } }
+
+        /* AI MODAL */
+        #ai-modal {
+            position: fixed; inset: 0; z-index: 1002;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: 0.3s;
+        }
+        #ai-modal.open { opacity: 1; pointer-events: all; }
+        
+        .ai-content {
+            width: 90%; max-width: 450px; height: 550px;
+            background: #131722; border-radius: 20px;
+            border: 1px solid rgba(255,180,0,0.2);
+            position: relative; overflow: hidden;
+            transform: translateY(20px); transition: 0.3s;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        #ai-modal.open .ai-content { transform: translateY(0); }
+        .close-ai { position: absolute; top: 15px; right: 20px; color: rgba(255,255,255,0.5); font-size: 28px; cursor: pointer; z-index: 20; }
+        .ai-watermark { position: absolute; bottom: 0; left: 0; right: 0; height: 40px; background: linear-gradient(to top, #000, transparent); display: flex; align-items: center; justify-content: center; z-index: 10; pointer-events: none; }
+        .ai-watermark span { font-weight: 900; font-size: 16px; letter-spacing: 6px; background: linear-gradient(to right, #00b894, #fff); -webkit-background-clip: text; color: transparent; opacity: 0.8; text-transform: uppercase; }
+
+        /* 📲 INSTALL & SHARE */
+        #install-btn { display: none; position: fixed; top: 15px; right: 15px; z-index: 1001; background: rgba(255,180,0,0.15); color: var(--accent); border: 1px solid var(--accent); padding: 6px 14px; border-radius: 8px; font-weight: bold; font-size: 12px; backdrop-filter: blur(5px); }
+        #share-btn { position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); z-index: 1000; background: #2962ff; color: white; border: none; padding: 12px 35px; border-radius: 50px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 30px rgba(41, 98, 255, 0.4); letter-spacing: 1px; font-size: 13px; }
+
+        /* BOTTOM BRAND BAR */
+        #bottom-brand-bar { width: 100%; height: 35px; background: var(--bg); display: flex; align-items: center; justify-content: center; border-top: 1px solid rgba(255, 180, 0, 0.1); z-index: 900; }
+        .gold-text-shimmer { font-weight: 900; font-size: 14px; letter-spacing: 4px; text-transform: uppercase; background: linear-gradient(to right, #a87b00 0%, #ffd700 50%, #a87b00 100%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: goldShine 3s linear infinite reverse; }
+        @keyframes goldShine { to { background-position: 200% center; } }
+
+        #q-terminal { flex: 1; width: 100%; }
+        
+        @media (max-width: 768px) {
+            .q-brand-anim { font-size: 28px; letter-spacing: 1px; }
+            .q-sub-text { font-size: 8px; letter-spacing: 2px; }
+            .ai-content { width: 95%; height: 60%; max-height: 500px; }
+            #ai-btn { width: 45px; height: 45px; font-size: 20px; bottom: 100px; right: 15px; }
+            #search-btn { width: 45px; height: 45px; font-size: 18px; bottom: 160px; right: 15px; } 
+            #share-btn { bottom: 45px; }
+            #bottom-brand-bar { height: 30px; }
+            .gold-text-shimmer { font-size: 12px; letter-spacing: 3px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loading-gate">
+        <div class="q-brand-anim">QEXERON</div>
+        <div class="q-sub-text">AI TERMINAL SYSTEMS</div>
+    </div>
+
+    <button id="search-btn" onclick="openSearch()">🔍</button>
+
+    <div id="search-modal" onclick="closeSearch(event)">
+        <div class="search-box">
+            <input type="text" id="symbol-input" placeholder="SYMBOL (Ex: ETH)" autocomplete="off">
+        </div>
+        <div class="search-tips">
+            <div class="tip-chip" onclick="quickSearch('BTCUSDT')">BTC</div>
+            <div class="tip-chip" onclick="quickSearch('ETHUSDT')">ETH</div>
+            <div class="tip-chip" onclick="quickSearch('XAUUSD')">GOLD</div>
+            <div class="tip-chip" onclick="quickSearch('SOLUSDT')">SOL</div>
+        </div>
+    </div>
+
+    <button id="ai-btn" onclick="openAI()">🤖</button>
+
+    <div id="ai-modal" onclick="closeAI(event)">
+        <div class="ai-content">
+            <span class="close-ai" onclick="closeAI(event)">&times;</span>
+            <div id="technical-analysis-container" style="height: 100%; width: 100%; padding-bottom: 30px;"></div>
+            <div class="ai-watermark"><span>QEXERON</span></div>
+        </div>
+    </div>
+
+    <button id="install-btn">📲 INSTALL</button>
+    <button id="share-btn" onclick="shareDynamicChart()">SHARE ANALYSIS</button>
+    
+    <main id="q-terminal"></main>
+
+    <div id="bottom-brand-bar">
+        <span class="gold-text-shimmer">QEXERON</span>
+    </div>
+
     <script src="https://s3.tradingview.com/tv.js"></script>
     <script>
         const LAZY_DELAY = 2200; 
@@ -7,10 +194,10 @@
         let rawSymbol = urlParams.get('symbol'); 
         
         // DEFAULT SYMBOL LOGIKASI
-        let currentSymbol = "BINANCE:BTCUSDT"; // Agar hech narsa bo'lmasa
+        let currentSymbol = "BINANCE:BTCUSDT"; 
 
         if (rawSymbol) {
-            // Agar URLda ikki nuqta (:) bo'lsa (Masalan: OANDA:XAUUSD), o'zini olamiz
+            // Agar : bo'lsa (OANDA:XAUUSD), o'zini olamiz
             if (rawSymbol.includes(':')) {
                 currentSymbol = rawSymbol;
             } 
@@ -55,21 +242,18 @@
             if (e.target.id === 'search-modal') document.getElementById('search-modal').classList.remove('open');
         }
         
-        // Tezkor tugmalar (Chips)
         function quickSearch(sym) {
             window.location.href = `?symbol=${sym}`;
         }
 
-        // Input orqali qidirish
+        // INPUT FIX: GOLD yozsa XAUUSD ga o'tkazish
         document.getElementById('symbol-input').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 let val = this.value.toUpperCase().trim();
                 if(val) {
-                    // GOLD yozsa -> XAUUSD ga o'zgartiramiz
                     if (val === 'GOLD') val = 'XAUUSD';
 
-                    // Agar XAUUSD bo'lsa, unga USDT qo'shmaymiz!
-                    // Agar kripto bo'lsa va oxirida USDT/USD bo'lmasa, qo'shib qo'yamiz
+                    // XAUUSD ga USDT qo'shmaymiz, qolganlariga qo'shamiz
                     if (val !== 'XAUUSD' && !val.includes('USD') && !val.includes('EUR') && !val.includes('JPY')) {
                         val += 'USDT';
                     }
@@ -79,7 +263,7 @@
             }
         });
 
-        // 🤖 AI FUNKSIYASI (FIX QILINGAN JOYI 🛠)
+        // 🤖 AI FUNKSIYASI (GOLD FIX 🛠)
         function openAI() {
             document.getElementById('ai-modal').classList.add('open');
             document.getElementById('technical-analysis-container').innerHTML = "";
@@ -88,7 +272,6 @@
             let aiSymbol = currentSymbol;
 
             // AGAR GOLD BO'LSA -> ANIQ "OANDA:XAUUSD" QILIB BERAMIZ
-            // Chunki AI vidjeti "BINANCE:XAUUSD" ni tushunmaydi
             if (aiSymbol.includes('XAUUSD') || aiSymbol === 'GOLD') {
                 aiSymbol = "OANDA:XAUUSD";
             }
@@ -103,7 +286,7 @@
                 "width": "100%",
                 "isTransparent": true, 
                 "height": "100%",
-                "symbol": aiSymbol, // <--- O'zgartirilgan simvol ketdi
+                "symbol": aiSymbol, 
                 "showIntervalTabs": true,
                 "displayMode": "single",
                 "locale": "en",
@@ -132,3 +315,5 @@
         window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; installBtn.style.display = 'block'; });
         installBtn.addEventListener('click', () => { installBtn.style.display = 'none'; deferredPrompt.prompt(); });
     </script>
+</body>
+</html>
